@@ -18,6 +18,9 @@ ntnls simulate --snr-db 0 5 10 --seed 1 --out results/
 - `results/run.json` for single-SNR runs
 - `results/sweep.json` and `results/ber_vs_snr.png` for SNR sweeps
 
+## Example output
+![BER vs SNR (AWGN)](docs/ber_vs_snr.png)
+
 ## Next milestones
 
 - Doppler and delay models for LEO dynamics
