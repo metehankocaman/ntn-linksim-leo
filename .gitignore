@@ -1,0 +1,21 @@
+cat > .gitignore <<'EOF'
+# Python / venv
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+
+# Generated results / artifacts
+results*/
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+EOF

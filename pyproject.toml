@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ntn-linksim-leo"
+version = "0.1.0"
+description = "Reproducible OFDM link-level simulator baseline for NTN/LEO."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = ["numpy", "pyyaml", "matplotlib"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "black"]
+
+[project.scripts]
+ntnls = "ntn_linksim.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ntn_linksim*"]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
