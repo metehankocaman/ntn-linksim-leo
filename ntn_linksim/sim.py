@@ -11,6 +11,7 @@ import numpy as np
 from ntn_linksim.channel.awgn import add_awgn
 from ntn_linksim.channel.cfo import apply_cfo
 from ntn_linksim.rng import seeded_rng
+from ntn_linksim.rx.cfo import compensate_cfo, estimate_cfo_from_cp
 from ntn_linksim.waveform.modulation import qpsk_demod_hard, qpsk_mod
 from ntn_linksim.waveform.ofdm import (
     OfdmParams,
@@ -37,6 +38,7 @@ class SimConfig:
     seed: int = 1
     fs_hz: float = 15.36e6
     cfo_hz: float = 0.0
+    enable_cfo_comp: bool = False
 
     def validate(self) -> None:
         params = OfdmParams(
@@ -85,6 +87,16 @@ def run_once(config: SimConfig) -> SimResult:
         tx_samples = apply_cfo(tx_samples, fs_hz=config.fs_hz, cfo_hz=config.cfo_hz)
 
     rx_samples = add_awgn(tx_samples, config.snr_db, rng)
+    if config.enable_cfo_comp:
+        symbol_len = params.n_fft + params.cp_len
+        rx0 = rx_samples[:symbol_len]
+        cfo_hat = estimate_cfo_from_cp(
+            rx0,
+            n_fft=params.n_fft,
+            cp_len=params.cp_len,
+            fs_hz=config.fs_hz,
+        )
+        rx_samples = compensate_cfo(rx_samples, fs_hz=config.fs_hz, cfo_hz=cfo_hat)
 
     rx_with_cp = deserialize_symbols(rx_samples, params)
     rx_no_cp = remove_cp(rx_with_cp, params.cp_len)
