@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from ntn_linksim.channel.awgn import add_awgn
+from ntn_linksim.channel.cfo import apply_cfo
 from ntn_linksim.rng import seeded_rng
 from ntn_linksim.waveform.modulation import qpsk_demod_hard, qpsk_mod
 from ntn_linksim.waveform.ofdm import (
@@ -34,6 +35,8 @@ class SimConfig:
     n_symbols: int = 200
     snr_db: float = 10.0
     seed: int = 1
+    fs_hz: float = 15.36e6
+    cfo_hz: float = 0.0
 
     def validate(self) -> None:
         params = OfdmParams(
@@ -43,6 +46,8 @@ class SimConfig:
             n_symbols=self.n_symbols,
         )
         params.validate()
+        if self.fs_hz <= 0:
+            raise ValueError("fs_hz must be positive")
 
     def ofdm_params(self) -> OfdmParams:
         return OfdmParams(
@@ -76,6 +81,8 @@ def run_once(config: SimConfig) -> SimResult:
     time_symbols = ifft_symbols(grid)
     tx_with_cp = add_cp(time_symbols, params.cp_len)
     tx_samples = serialize_symbols(tx_with_cp)
+    if config.cfo_hz != 0.0:
+        tx_samples = apply_cfo(tx_samples, fs_hz=config.fs_hz, cfo_hz=config.cfo_hz)
 
     rx_samples = add_awgn(tx_samples, config.snr_db, rng)
 
