@@ -16,3 +16,6 @@ run:
 
 run-cfo:
 	. .venv/bin/activate && ntnls cfo-sweep --cfo-hz 0 15000 30000 45000 60000 --snr-db 20 --seed 1 --out results_cfo/
+
+run-delay:
+	. .venv/bin/activate && ntnls delay-sweep --delay-samples 0 4 8 12 16 20 24 --snr-db 20 --seed 1 --out results_delay/

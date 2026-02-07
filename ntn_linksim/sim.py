@@ -10,8 +10,10 @@ import numpy as np
 
 from ntn_linksim.channel.awgn import add_awgn
 from ntn_linksim.channel.cfo import apply_cfo
+from ntn_linksim.channel.delay import apply_delay
 from ntn_linksim.rng import seeded_rng
 from ntn_linksim.rx.cfo import compensate_cfo, estimate_cfo_from_cp
+from ntn_linksim.rx.timing import compensate_integer_delay, estimate_timing_offset_cp
 from ntn_linksim.waveform.modulation import qpsk_demod_hard, qpsk_mod
 from ntn_linksim.waveform.ofdm import (
     OfdmParams,
@@ -39,6 +41,8 @@ class SimConfig:
     fs_hz: float = 15.36e6
     cfo_hz: float = 0.0
     enable_cfo_comp: bool = False
+    delay_samples: float = 0.0
+    enable_timing_comp: bool = False
 
     def validate(self) -> None:
         params = OfdmParams(
@@ -85,8 +89,21 @@ def run_once(config: SimConfig) -> SimResult:
     tx_samples = serialize_symbols(tx_with_cp)
     if config.cfo_hz != 0.0:
         tx_samples = apply_cfo(tx_samples, fs_hz=config.fs_hz, cfo_hz=config.cfo_hz)
+    if config.delay_samples != 0.0:
+        tx_samples = apply_delay(tx_samples, config.delay_samples)
 
     rx_samples = add_awgn(tx_samples, config.snr_db, rng)
+
+    # Timing compensation first (must align symbol boundaries before CFO est.)
+    if config.enable_timing_comp:
+        delay_hat = estimate_timing_offset_cp(
+            rx_samples,
+            n_fft=params.n_fft,
+            cp_len=params.cp_len,
+            n_symbols=params.n_symbols,
+        )
+        rx_samples = compensate_integer_delay(rx_samples, delay_hat)
+
     if config.enable_cfo_comp:
         symbol_len = params.n_fft + params.cp_len
         rx0 = rx_samples[:symbol_len]
