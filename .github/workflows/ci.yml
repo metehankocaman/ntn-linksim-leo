@@ -35,3 +35,10 @@ jobs:
         with:
           name: results-cfo
           path: results_cfo
+      - name: Delay sweep artifacts
+        run: ntnls delay-sweep --delay-samples 0 4 8 16 24 --snr-db 20 --seed 1 --out results_delay
+      - name: Upload delay artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-delay
+          path: results_delay
