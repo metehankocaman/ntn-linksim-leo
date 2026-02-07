@@ -1,0 +1,14 @@
+name: "LEO Fast Pass + Rician"
+description: "BER vs SNR with CFO + delay + Rician K=10dB + compensation enabled"
+config:
+  seed: 1
+  n_symbols: 200
+  cfo_hz: 24000.0
+  delay_samples: 8.0
+  enable_cfo_comp: true
+  enable_timing_comp: true
+  enable_rician: true
+  rician_k_db: 10.0
+sweep:
+  type: snr
+  snr_db: [0, 2, 4, 6, 8, 10, 12, 14]

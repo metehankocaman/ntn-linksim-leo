@@ -1,0 +1,9 @@
+name: "Rician K-factor Sweep"
+description: "BER vs Rician K-factor at SNR=15 dB"
+config:
+  seed: 1
+  n_symbols: 200
+  snr_db: 15.0
+sweep:
+  type: rician_k
+  k_db: [-3, 0, 3, 5, 10, 15, 20]

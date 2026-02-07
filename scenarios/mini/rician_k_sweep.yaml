@@ -1,0 +1,9 @@
+name: "Rician K-factor Sweep (mini)"
+description: "BER vs Rician K — small for CI"
+config:
+  seed: 1
+  n_symbols: 50
+  snr_db: 15.0
+sweep:
+  type: rician_k
+  k_db: [0, 10, 20]

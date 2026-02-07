@@ -1,0 +1,8 @@
+name: "AWGN Baseline (mini)"
+description: "BER vs SNR in pure AWGN — small for CI"
+config:
+  seed: 1
+  n_symbols: 50
+sweep:
+  type: snr
+  snr_db: [0, 5, 10]

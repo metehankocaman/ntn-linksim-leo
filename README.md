@@ -6,6 +6,7 @@ Simulation-first, reproducible OFDM link-level simulator for NTN/LEO research.
 - **M0**: AWGN baseline with QPSK-OFDM, BER measurement, CLI, deterministic artifacts
 - **M1**: CFO (Doppler) impairment + CP-based estimation + compensation
 - **M2**: Delay / timing offset impairment + CP-based timing estimation + compensation
+- **M3**: Rician fading channel + YAML scenario harness + `make reproduce`
 
 ## Quickstart
 
@@ -32,6 +33,22 @@ ntnls cfo-sweep --cfo-hz 0 15000 30000 45000 60000 --snr-db 20 --seed 42 --out r
 ntnls delay-sweep --delay-samples 0 4 8 12 16 20 24 --snr-db 20 --seed 1 --out results_delay/
 ```
 
+**Rician K-factor sweep**:
+```bash
+ntnls rician-sweep --k-db -3 0 3 5 10 15 20 --snr-db 15 --seed 1 --out results_rician/
+```
+
+**Run a single scenario**:
+```bash
+ntnls run-scenario scenarios/awgn.yaml --out results/
+```
+
+**Reproduce all figures**:
+```bash
+make reproduce        # Full scenarios -> docs/
+make reproduce-mini   # Mini scenarios -> results_mini/ (fast, for CI)
+```
+
 ## Artifacts
 
 | Command | Outputs |
@@ -39,6 +56,9 @@ ntnls delay-sweep --delay-samples 0 4 8 12 16 20 24 --snr-db 20 --seed 1 --out r
 | `simulate` | `sweep.json`, `ber_vs_snr.png` |
 | `cfo-sweep` | `sweep_cfo.json`, `ber_vs_cfo.png` |
 | `delay-sweep` | `sweep_delay.json`, `ber_vs_delay.png` |
+| `rician-sweep` | `sweep_rician.json`, `ber_vs_rician_k.png` |
+| `run-scenario` | Depends on scenario sweep type |
+| `reproduce` | All scenario artifacts in subdirectories |
 
 ## Example outputs
 
@@ -67,6 +87,32 @@ realigns the FFT window, keeping BER near zero across all tested delays.
 > offset detection. Fractional delay injection is supported but compensation is
 > integer-only.
 
+### BER vs Rician K-factor
+![BER vs Rician K](docs/rician_k_sweep/ber_vs_rician_k.png)
+
+Single-tap block Rician fading (one i.i.d. coefficient per OFDM symbol, flat
+fading). Lower K-factor means stronger NLOS scattering and higher BER. At very
+high K (strong LoS), performance converges to the AWGN baseline.
+
+> **Note**: No channel equalization is applied — BER degradation from fading is
+> shown but not corrected. Single-tap only (no frequency selectivity).
+
+## Scenarios
+
+YAML-driven experiment configs in `scenarios/`. Each file specifies a base
+`SimConfig` and a sweep type (`snr`, `cfo`, `delay`, `rician_k`):
+
+| Scenario | Sweep | Channel |
+|----------|-------|---------|
+| `awgn.yaml` | SNR | Pure AWGN |
+| `leo_fast.yaml` | SNR | CFO + delay + comp |
+| `leo_fast_rician.yaml` | SNR | CFO + delay + Rician + comp |
+| `cfo_sweep.yaml` | CFO | With compensation |
+| `delay_sweep.yaml` | Delay | With compensation |
+| `rician_k_sweep.yaml` | K-factor | Rician at fixed SNR |
+
+`scenarios/mini/` contains smaller versions for CI.
+
 ## Next milestones
 
-- **M3**: Rician fading + scenario harness
+- **M4**: Multipath + equalization

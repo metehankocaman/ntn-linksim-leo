@@ -1,0 +1,10 @@
+name: "Delay Sweep"
+description: "BER vs timing offset at SNR=20 dB with compensation"
+config:
+  seed: 1
+  n_symbols: 200
+  snr_db: 20.0
+sweep:
+  type: delay
+  delay_samples: [0, 4, 8, 12, 16, 20, 24]
+  enable_comp: true
