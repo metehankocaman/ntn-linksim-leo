@@ -19,3 +19,12 @@ run-cfo:
 
 run-delay:
 	. .venv/bin/activate && ntnls delay-sweep --delay-samples 0 4 8 12 16 20 24 --snr-db 20 --seed 1 --out results_delay/
+
+run-rician:
+	. .venv/bin/activate && ntnls rician-sweep --k-db -3 0 3 5 10 15 20 --snr-db 15 --seed 1 --out results_rician/
+
+reproduce:
+	. .venv/bin/activate && ntnls reproduce --scenario-dir scenarios --out docs/
+
+reproduce-mini:
+	. .venv/bin/activate && ntnls reproduce --scenario-dir scenarios/mini --out results_mini/

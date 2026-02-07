@@ -1,0 +1,10 @@
+name: "CFO Sweep (mini)"
+description: "BER vs CFO — small for CI"
+config:
+  seed: 1
+  n_symbols: 50
+  snr_db: 20.0
+sweep:
+  type: cfo
+  cfo_hz: [0, 30000, 60000]
+  enable_comp: true

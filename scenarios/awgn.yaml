@@ -1,0 +1,8 @@
+name: "AWGN Baseline"
+description: "BER vs SNR in pure AWGN"
+config:
+  seed: 1
+  n_symbols: 200
+sweep:
+  type: snr
+  snr_db: [0, 2, 4, 6, 8, 10, 12, 14]

@@ -1,0 +1,10 @@
+name: "CFO Sweep"
+description: "BER vs CFO at SNR=20 dB with compensation"
+config:
+  seed: 1
+  n_symbols: 200
+  snr_db: 20.0
+sweep:
+  type: cfo
+  cfo_hz: [0, 15000, 30000, 45000, 60000]
+  enable_comp: true
