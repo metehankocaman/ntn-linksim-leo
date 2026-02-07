@@ -13,3 +13,6 @@ format:
 
 run:
 	. .venv/bin/activate && ntnls simulate --snr-db 0 5 10 --seed 1 --out results/
+
+run-cfo:
+	. .venv/bin/activate && ntnls cfo-sweep --cfo-hz 0 15000 30000 45000 60000 --snr-db 20 --seed 1 --out results_cfo/
