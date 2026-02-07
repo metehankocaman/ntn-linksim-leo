@@ -42,3 +42,10 @@ jobs:
         with:
           name: results-delay
           path: results_delay
+      - name: Reproduce mini artifacts
+        run: ntnls reproduce --scenario-dir scenarios/mini --out results_mini
+      - name: Upload reproduce artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-reproduce
+          path: results_mini/

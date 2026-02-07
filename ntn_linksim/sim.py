@@ -11,6 +11,7 @@ import numpy as np
 from ntn_linksim.channel.awgn import add_awgn
 from ntn_linksim.channel.cfo import apply_cfo
 from ntn_linksim.channel.delay import apply_delay
+from ntn_linksim.channel.rician import apply_rician_fading
 from ntn_linksim.rng import seeded_rng
 from ntn_linksim.rx.cfo import compensate_cfo, estimate_cfo_from_cp
 from ntn_linksim.rx.timing import compensate_integer_delay, estimate_timing_offset_cp
@@ -43,6 +44,8 @@ class SimConfig:
     enable_cfo_comp: bool = False
     delay_samples: float = 0.0
     enable_timing_comp: bool = False
+    enable_rician: bool = False
+    rician_k_db: float = 10.0
 
     def validate(self) -> None:
         params = OfdmParams(
@@ -86,6 +89,8 @@ def run_once(config: SimConfig) -> SimResult:
     grid = tx_grid(symbols, params)
     time_symbols = ifft_symbols(grid)
     tx_with_cp = add_cp(time_symbols, params.cp_len)
+    if config.enable_rician:
+        tx_with_cp = apply_rician_fading(tx_with_cp, config.rician_k_db, rng)
     tx_samples = serialize_symbols(tx_with_cp)
     if config.cfo_hz != 0.0:
         tx_samples = apply_cfo(tx_samples, fs_hz=config.fs_hz, cfo_hz=config.cfo_hz)

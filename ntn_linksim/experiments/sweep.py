@@ -1,4 +1,4 @@
-"""SNR, CFO, and delay sweep utilities."""
+"""SNR, CFO, delay, and Rician K-factor sweep utilities."""
 
 from __future__ import annotations
 
@@ -216,4 +216,68 @@ def save_sweep_delay(
     plt.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()
     plt.savefig(out_path / "ber_vs_delay.png", dpi=150)
+    plt.close()
+
+
+def sweep_ber_vs_rician_k(
+    config: SimConfig,
+    k_db_list: Iterable[float],
+) -> list[float]:
+    """Sweep Rician K-factor at fixed SNR, return BER list.
+
+    Args:
+        config: Base simulation config (snr_db used as the fixed SNR point).
+        k_db_list: K-factor values in dB to sweep.
+
+    Returns:
+        List of BER values corresponding to each K point.
+    """
+    ber_list = []
+    for k_db in k_db_list:
+        cfg = replace(config, enable_rician=True, rician_k_db=float(k_db))
+        result = run_once(cfg)
+        ber_list.append(result.ber)
+    return ber_list
+
+
+def save_sweep_rician(
+    out_dir: str | Path,
+    k_db_list: Iterable[float],
+    ber_list: list[float],
+    snr_db: float | None = None,
+) -> None:
+    """Save Rician K sweep JSON and BER vs K plot.
+
+    Args:
+        out_dir: Output directory for artifacts.
+        k_db_list: K-factor values in dB that were swept.
+        ber_list: BER values for each K point.
+        snr_db: Fixed SNR used for the sweep (for labeling).
+    """
+    out_path = Path(out_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+
+    k_values = [float(x) for x in k_db_list]
+    payload: dict = {
+        "rician_k_db": k_values,
+        "ber": ber_list,
+    }
+    if snr_db is not None:
+        payload["snr_db"] = snr_db
+
+    json_path = out_path / "sweep_rician.json"
+    with json_path.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, sort_keys=True)
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(k_values, ber_list, marker="o")
+    plt.xlabel("Rician K-factor (dB)")
+    plt.ylabel("BER")
+    title = "BER vs Rician K-factor"
+    if snr_db is not None:
+        title += f" at SNR = {snr_db} dB"
+    plt.title(title)
+    plt.grid(True, linestyle="--", alpha=0.5)
+    plt.tight_layout()
+    plt.savefig(out_path / "ber_vs_rician_k.png", dpi=150)
     plt.close()
