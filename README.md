@@ -113,6 +113,8 @@ YAML-driven experiment configs in `scenarios/`. Each file specifies a base
 
 `scenarios/mini/` contains smaller versions for CI.
 
-## Next milestones
+## Known Limitations
 
-- **M4**: Multipath + equalization
+- Rician fading is single-tap only (flat fading) — no frequency selectivity
+- No channel equalization — BER degradation from fading is shown but not corrected
+- Block fading (i.i.d. per symbol) — no temporal correlation / Doppler spectrum
