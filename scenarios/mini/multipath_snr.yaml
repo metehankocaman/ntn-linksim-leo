@@ -1,0 +1,11 @@
+name: "Multipath SNR Sweep (mini)"
+description: "BER vs SNR with multipath fading — small for CI"
+config:
+  seed: 1
+  n_symbols: 50
+  enable_multipath: true
+  multipath_n_taps: 8
+  multipath_tau_rms: 3.0
+sweep:
+  type: snr
+  snr_db: [0, 5, 10]

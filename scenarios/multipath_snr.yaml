@@ -1,0 +1,11 @@
+name: "Multipath SNR Sweep"
+description: "BER vs SNR with frequency-selective multipath fading (8 taps)"
+config:
+  seed: 1
+  n_symbols: 200
+  enable_multipath: true
+  multipath_n_taps: 8
+  multipath_tau_rms: 3.0
+sweep:
+  type: snr
+  snr_db: [0, 2, 4, 6, 8, 10, 12, 14]
