@@ -7,6 +7,7 @@ Simulation-first, reproducible OFDM link-level simulator for NTN/LEO research.
 - **M1**: CFO (Doppler) impairment + CP-based estimation + compensation
 - **M2**: Delay / timing offset impairment + CP-based timing estimation + compensation
 - **M3**: Rician fading channel + YAML scenario harness + `make reproduce`
+- **M4**: Multipath channel + comb pilots + LS channel estimation with interpolation
 
 ## Quickstart
 
@@ -115,6 +116,6 @@ YAML-driven experiment configs in `scenarios/`. Each file specifies a base
 
 ## Known Limitations
 
-- Rician fading is single-tap only (flat fading) — no frequency selectivity
-- No channel equalization — BER degradation from fading is shown but not corrected
+- The standalone Rician model is single-tap (flat fading); frequency selectivity comes from the multipath model
+- `zf_equalize` exists, but the main simulation path doesn't apply it, so BER degradation from fading is shown but not corrected
 - Block fading (i.i.d. per symbol) — no temporal correlation / Doppler spectrum

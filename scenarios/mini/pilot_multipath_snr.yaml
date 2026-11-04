@@ -1,0 +1,13 @@
+name: "Pilot + Multipath SNR Sweep (mini)"
+description: "BER vs SNR with pilots and multipath fading — small for CI"
+config:
+  seed: 1
+  n_symbols: 50
+  enable_pilots: true
+  pilot_spacing: 4
+  enable_multipath: true
+  multipath_n_taps: 4
+  multipath_tau_rms: 2.0
+sweep:
+  type: snr
+  snr_db: [0, 10, 20]
